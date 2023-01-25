@@ -3,7 +3,9 @@ package com.zyarn;
 import cn.dev33.satoken.quick.SaQuickManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
+@Import({com.zyarn.utils.SpringInit.class})
 @SpringBootApplication
 public class SimpleVideoApplication {
 
