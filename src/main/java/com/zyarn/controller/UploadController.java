@@ -2,6 +2,7 @@ package com.zyarn.controller;
 
 import com.zyarn.common.domain.JsonData;
 import com.zyarn.utils.FileUploadUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * 上传文件处理
  */
+@Slf4j
 @Controller
 public class UploadController {
 
@@ -31,6 +33,7 @@ public class UploadController {
             map.put("originalFilename", file.getOriginalFilename());
             return JsonData.success(map);
         } catch (Exception e) {
+            log.info("上传文件失败", e);
             return JsonData.error(e.getMessage());
         }
     }

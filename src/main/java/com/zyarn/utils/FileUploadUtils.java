@@ -6,6 +6,7 @@ import com.zyarn.config.MinioConfig;
 import com.zyarn.exception.FileNameLengthLimitExceededException;
 import com.zyarn.exception.FileSizeLimitExceededException;
 import com.zyarn.exception.InvalidExtensionException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.util.Date;
 /**
  * 文件上传工具类
  */
+@Slf4j
 public class FileUploadUtils {
     /**
      * 默认大小 50M
@@ -58,8 +60,9 @@ public class FileUploadUtils {
      */
     public static final String uploadMinio(MultipartFile file) throws IOException {
         try {
-            return uploadMinino(getBucketName(), file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+            return uploadMinio(getBucketName(), file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         } catch (Exception e) {
+            log.error("upload file failed", e);
             throw new IOException(e.getMessage(), e);
         }
     }
@@ -73,13 +76,13 @@ public class FileUploadUtils {
      */
     public static final String uploadMinio(MultipartFile file, String bucketName) throws IOException {
         try {
-            return uploadMinino(bucketName, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+            return uploadMinio(bucketName, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
     }
 
-    private static final String uploadMinino(String bucketName, MultipartFile file, String[] allowedExtension)
+    private static final String uploadMinio(String bucketName, MultipartFile file, String[] allowedExtension)
             throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException {
         int fileNamelength = file.getOriginalFilename().length();
         if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
