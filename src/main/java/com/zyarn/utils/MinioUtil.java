@@ -19,6 +19,7 @@ public class MinioUtil {
      *
      * @param bucketName 桶名称
      * @param fileName   文件名称
+     * @param multipartFile 文件
      * @throws IOException
      */
     public static String uploadFile(String bucketName, String fileName, MultipartFile multipartFile) throws IOException {
@@ -26,6 +27,27 @@ public class MinioUtil {
         MinioClient minioClient = SpringInit.getBean(MinioClient.class);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(inputStream, multipartFile.getSize(), -1).contentType(multipartFile.getContentType()).build());
+            url = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().bucket(bucketName).object(fileName).method(Method.GET).build());
+            url = url.substring(0, url.indexOf('?'));
+            return URLDecoder.decode(url, "UTF-8");
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     *
+     * @param bucketName 桶名称
+     * @param fileName  文件名称
+     * @param inputStream 文件流
+     * @return 文件访问地址
+     * @throws IOException
+     */
+    public static String uploadFile(String bucketName, String fileName, InputStream inputStream) throws IOException {
+        String url = "";
+        MinioClient minioClient = SpringInit.getBean(MinioClient.class);
+        try {
+            minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(inputStream, inputStream.available(), -1).build());
             url = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().bucket(bucketName).object(fileName).method(Method.GET).build());
             url = url.substring(0, url.indexOf('?'));
             return URLDecoder.decode(url, "UTF-8");
